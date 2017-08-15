@@ -1,5 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import axios from 'axios';
+
 
 import ImageGallery from '../src/ImageGallery';
 
@@ -26,28 +28,10 @@ class App extends React.Component {
       showVideo: {},
     };
 
-    this.images = [
-      {
-        original: `${PREFIX_URL}1.jpg`,
-        thumbnail: `${PREFIX_URL}1t.jpg`,
-        originalClass: 'featured-slide',
-        thumbnailClass: 'featured-thumb',
-        description: 'Custom class for slides & thumbnails'
-      },
-      {
-        thumbnail: `${PREFIX_URL}3v.jpg`,
-        original: `${PREFIX_URL}3v.jpg`,
-        embedUrl: 'https://www.youtube.com/embed/iNJdPyoqt8U?autoplay=1&showinfo=0',
-        description: 'Render custom slides within the gallery',
-        renderItem: this._renderVideo.bind(this)
-      },
-      {
-        thumbnail: `${PREFIX_URL}4v.jpg`,
-        original: `${PREFIX_URL}4v.jpg`,
-        embedUrl: 'https://www.youtube.com/embed/4pSzhZ76GdM?autoplay=1&showinfo=0',
-        renderItem: this._renderVideo.bind(this)
-      }
-    ].concat(this._getStaticImages());
+    this._getStaticImages()
+    setInterval(() => this._getStaticImages(), 20000)
+
+    
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -97,6 +81,34 @@ class App extends React.Component {
   }
 
   _getStaticImages() {
+
+    axios.get(`http://138.68.162.15:8080/api`)
+      .then(res => { 
+        console.log(res)
+        //const posts = res.data.data.children.map(obj => obj.data);
+        //this.setState({ posts });
+        const temp = res.data;
+        let retrieved = [];
+        
+        for(let i = 0; i < temp.length; i++){
+          retrieved.push({
+            original: temp[i].url, 
+            thumbnail: temp[i].url, 
+            description: '#BK2018'
+          });
+        }
+
+        console.log(retrieved)
+        
+    
+        this.setState({items: retrieved});
+
+
+
+    });
+
+    
+
     let images = [];
     for (let i = 2; i < 12; i++) {
       images.push({
@@ -106,6 +118,8 @@ class App extends React.Component {
     }
 
     return images;
+
+
   }
 
   _resetVideo() {
@@ -182,7 +196,7 @@ class App extends React.Component {
       <section className='app'>
         <ImageGallery
           ref={i => this._imageGallery = i}
-          items={this.images}
+          items={this.state.items}
           lazyLoad={false}
           onClick={this._onImageClick.bind(this)}
           onImageLoad={this._onImageLoad}
