@@ -85,8 +85,6 @@ class App extends React.Component {
     axios.get(`http://138.68.162.15:8080/api`)
       .then(res => { 
         console.log(res)
-        //const posts = res.data.data.children.map(obj => obj.data);
-        //this.setState({ posts });
         const temp = res.data;
         let retrieved = [];
         
@@ -94,32 +92,13 @@ class App extends React.Component {
           retrieved.push({
             original: temp[i].url, 
             thumbnail: temp[i].url, 
-            description: '#BK2018'
+            description: temp[i].description
           });
         }
 
         console.log(retrieved)
-        
-    
         this.setState({items: retrieved});
-
-
-
     });
-
-    
-
-    let images = [];
-    for (let i = 2; i < 12; i++) {
-      images.push({
-        original: `${PREFIX_URL}${i}.jpg`,
-        thumbnail:`${PREFIX_URL}${i}t.jpg`
-      });
-    }
-
-    return images;
-
-
   }
 
   _resetVideo() {
